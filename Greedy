@@ -1,0 +1,55 @@
+import heapq
+class Node:
+    def __init__(self, position, h_cost):
+        self.position = position
+        self.h_cost = h_cost  
+
+    def __lt__(self, other):
+        return self.h_cost < other.h_cost
+
+
+def heuristic(current, goal):
+    return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
+
+
+def greedy_best_first_search(start, goal, grid):
+    open_list = []
+    heapq.heappush(open_list, Node(start, heuristic(start, goal)))
+    closed_list = set()
+
+    while open_list:
+        current_node = heapq.heappop(open_list)
+        current_position = current_node.position
+
+        
+        if current_position == goal:
+            print("Goal reached:", current_position)
+            return True
+
+        closed_list.add(current_position)
+
+  
+        neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0)]  
+        for move in neighbors:
+            neighbor_position = (current_position[0] + move[0], current_position[1] + move[1])
+
+            
+            if neighbor_position not in closed_list and grid[neighbor_position[0]][neighbor_position[1]] != 1:
+                h_cost = heuristic(neighbor_position, goal)
+                heapq.heappush(open_list, Node(neighbor_position, h_cost))
+
+    print("Goal not reachable")
+    return False
+
+
+grid = [
+    [0, 0, 0, 0],
+    [1, 1, 0, 1],
+    [0, 0, 0, 0],
+    [0, 1, 1, 0]
+]
+
+
+start = (0, 0)
+goal = (3, 3)
+greedy_best_first_search(start, goal, grid)
